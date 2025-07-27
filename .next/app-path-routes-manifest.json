@@ -1,0 +1,6 @@
+{
+  "/api/chat/route": "/api/chat",
+  "/page": "/",
+  "/favicon.ico/route": "/favicon.ico",
+  "/auth/page": "/auth"
+}

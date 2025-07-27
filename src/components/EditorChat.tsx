@@ -2,6 +2,7 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { useChat, Message } from 'ai/react';
 import { EditorSection } from '@/components/EditorSection';
 import { SendIcon } from '@/components/icons/SendIcon';
+import Image from 'next/image';
 
 const basePrompt = `You are a React JSX code generator. You MUST ONLY respond with executable JSX code wrapped in a code block.
 
@@ -212,7 +213,7 @@ export const EditorChat: FC<EditorChatProps> = ({ code, setCode, chat, setChat }
         <p className="text-sm text-gray-600 mt-1">Create or modify React components with AI</p>
         {hasExistingCode && (
           <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-800">
-            ✨ AI can modify the existing component. Try: "Make the button larger and red"
+            ✨ AI can modify the existing component. Try: &quot;Make the button larger and red&quot;
           </div>
         )}
       </div>
@@ -276,9 +277,11 @@ export const EditorChat: FC<EditorChatProps> = ({ code, setCode, chat, setChat }
                 Remove
               </button>
             </div>
-            <img 
+            <Image 
               src={imagePreview} 
               alt="Preview" 
+              width={128}
+              height={128}
               className="max-w-full h-32 object-contain rounded border"
             />
           </div>

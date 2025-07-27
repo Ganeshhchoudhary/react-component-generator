@@ -5,9 +5,9 @@ function getToken() {
   return localStorage.getItem('token');
 }
 
-function authHeaders() {
+function authHeaders(): HeadersInit | undefined {
   const token = getToken();
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return token ? { Authorization: `Bearer ${token}` } : undefined;
 }
 
 export async function signup(email: string, password: string) {

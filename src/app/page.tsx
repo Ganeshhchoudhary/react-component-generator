@@ -70,75 +70,28 @@ const App = () => {
     }
   }, [currentSessionId, code, chat, uiState]);
 
-  const runCode = (newCode: string) => {
-    setCode(newCode);
+  const runCode = (newCode: string | undefined) => {
+    setCode(newCode || '');
     saveSession({ code: newCode });
 
     try {
-      const transformed = transform(newCode, { presets: ['react'] }).code;
+      const transformed = transform(newCode || '', { presets: ['react'] }).code;
       setPreview(transformed);
     } catch (err) {
       setPreview(`Error: ${err}`);
     }
   };
 
-  // Load session when sessionId changes
-  useEffect(() => {
-    if (sessionId && sessionId !== currentSessionId) {
-      loadSession(sessionId);
-    }
-  }, [sessionId, currentSessionId, loadSession]);
-
-  // Auto-save chat when it changes
-  useEffect(() => {
-    if (currentSessionId && chat.length > 0) {
-      const timeoutId = setTimeout(() => {
-        saveSession({ chat });
-      }, 1000); // Debounce for 1 second
-      return () => clearTimeout(timeoutId);
-    }
-  }, [chat, currentSessionId, saveSession]);
-
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading...</div>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex h-full">
       <Sidebar />
-      <div className="px-4 py-2 flex w-full gap-2">
-        {sessionId && (
-          <>
-            <EditorChat 
-              code={code} 
-              setCode={runCode}
-              chat={chat}
-              setChat={setChat}
-            />
-            <Preview code={preview} />
-          </>
-        )}
-        {loading && (
-          <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
-            <div className="text-lg">Loading session...</div>
-          </div>
-        )}
-      </div>
-      <div className="absolute top-4 right-4">
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-600">{user.email}</span>
-          <button
-            onClick={handleLogout}
-            className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
-          >
-            Logout
-          </button>
-        </div>
-      </div>
+      <EditorChat 
+        code={code}
+        setCode={runCode}
+        chat={chat}
+        setChat={setChat}
+      />
+      <Preview code={preview} />
     </div>
   );
 };
