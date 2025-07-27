@@ -25,7 +25,6 @@
     "eslint-config-next": "13.4.9",
     "jszip": "^3.10.1",
     "next": "13.4.9",
-    "openai-edge": "^1.2.0",
     "postcss": "8.4.25",
     "prisma": "^5.2.0",
     "prismjs": "^1.30.0",

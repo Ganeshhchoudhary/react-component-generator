@@ -1,0 +1,47 @@
+1. Authentication & Persistence (Mandatory)
+   1.1 Signup / Login using email + password or OAuth.
+   1.2 Load Previous Sessions with:
+       - Full chat transcript
+       - Generated code
+       - UI editor state
+   1.3 Create New Session with an empty slate saved in the DB.
+
+2. Conversational UI for Generation (Mandatory)
+   2.1 Side-panel chat supporting text and image inputs.
+   2.2 AI responds with JSX/TSX + CSS component code.
+   2.3 Render the component live in the central viewport as a micro-frontend.
+
+3. Code Inspection & Export (Mandatory)
+   3.1 Below the preview, show tabs for:
+       - JSX/TSX (syntax-highlighted)
+       - CSS (syntax-highlighted)
+   3.2 Provide:
+       - Copy button
+       - Download button (.zip with JSX/TSX + CSS)
+
+4. Iterative Refinement (Optional / Good to Have)
+   4.1 Allow further prompts in chat (e.g., “Make the button red”).
+   4.2 AI applies deltas to existing code and re-renders the component.
+
+5. Statefulness & Resume (Optional / Good to Have)
+   5.1 Auto-save after every chat turn or UI-editor change.
+   5.2 On logout/login or page reload, restore:
+       - Full chat history
+       - Latest code
+       - Live preview state
+
+6. Interactive Property Editor (Bonus)
+   6.1 On element click (e.g., <button>), open floating property panel with:
+       - Size slider (padding, font-size)
+       - Color picker (background, text)
+       - Text input (content)
+       - Border/shadow/radius controls
+   6.2 Two-way binding:
+       - Changing knobs updates JSX/TSX + CSS
+       - Re-renders live sandbox
+       - Updates code tabs
+
+7. Chat-Driven Overrides (Bonus)
+   7.1 After selecting an element, allow chat input targeting it:
+       e.g., “Make this button have 24px vertical padding and a blue gradient.”
+   7.2 AI applies only the described delta to the component code.

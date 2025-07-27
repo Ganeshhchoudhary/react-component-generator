@@ -55,11 +55,19 @@
         "chunks": [],
         "async": false
       }
+    },
+    "(app-client)/./src/app/auth/page.tsx": {
+      "*": {
+        "id": "(sc_client)/./src/app/auth/page.tsx",
+        "name": "*",
+        "chunks": [],
+        "async": false
+      }
     }
   },
   "edgeSSRModuleMapping": {},
   "clientModules": {
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/node_modules/next/dist/client/components/error-boundary.js": {
+    "/Users/dineshchoudhary/Documents/react-component-generator/node_modules/next/dist/client/components/error-boundary.js": {
       "id": "(app-client)/./node_modules/next/dist/client/components/error-boundary.js",
       "name": "*",
       "chunks": [
@@ -67,7 +75,7 @@
       ],
       "async": false
     },
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/node_modules/next/dist/esm/client/components/error-boundary.js": {
+    "/Users/dineshchoudhary/Documents/react-component-generator/node_modules/next/dist/esm/client/components/error-boundary.js": {
       "id": "(app-client)/./node_modules/next/dist/client/components/error-boundary.js",
       "name": "*",
       "chunks": [
@@ -75,7 +83,7 @@
       ],
       "async": false
     },
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/node_modules/next/dist/client/components/app-router.js": {
+    "/Users/dineshchoudhary/Documents/react-component-generator/node_modules/next/dist/client/components/app-router.js": {
       "id": "(app-client)/./node_modules/next/dist/client/components/app-router.js",
       "name": "*",
       "chunks": [
@@ -83,7 +91,7 @@
       ],
       "async": false
     },
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/node_modules/next/dist/esm/client/components/app-router.js": {
+    "/Users/dineshchoudhary/Documents/react-component-generator/node_modules/next/dist/esm/client/components/app-router.js": {
       "id": "(app-client)/./node_modules/next/dist/client/components/app-router.js",
       "name": "*",
       "chunks": [
@@ -91,7 +99,7 @@
       ],
       "async": false
     },
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/node_modules/next/dist/client/components/layout-router.js": {
+    "/Users/dineshchoudhary/Documents/react-component-generator/node_modules/next/dist/client/components/layout-router.js": {
       "id": "(app-client)/./node_modules/next/dist/client/components/layout-router.js",
       "name": "*",
       "chunks": [
@@ -99,7 +107,7 @@
       ],
       "async": false
     },
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/node_modules/next/dist/esm/client/components/layout-router.js": {
+    "/Users/dineshchoudhary/Documents/react-component-generator/node_modules/next/dist/esm/client/components/layout-router.js": {
       "id": "(app-client)/./node_modules/next/dist/client/components/layout-router.js",
       "name": "*",
       "chunks": [
@@ -107,7 +115,7 @@
       ],
       "async": false
     },
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/node_modules/next/dist/client/components/render-from-template-context.js": {
+    "/Users/dineshchoudhary/Documents/react-component-generator/node_modules/next/dist/client/components/render-from-template-context.js": {
       "id": "(app-client)/./node_modules/next/dist/client/components/render-from-template-context.js",
       "name": "*",
       "chunks": [
@@ -115,7 +123,7 @@
       ],
       "async": false
     },
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/node_modules/next/dist/esm/client/components/render-from-template-context.js": {
+    "/Users/dineshchoudhary/Documents/react-component-generator/node_modules/next/dist/esm/client/components/render-from-template-context.js": {
       "id": "(app-client)/./node_modules/next/dist/client/components/render-from-template-context.js",
       "name": "*",
       "chunks": [
@@ -123,7 +131,7 @@
       ],
       "async": false
     },
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/node_modules/next/dist/client/components/static-generation-searchparams-bailout-provider.js": {
+    "/Users/dineshchoudhary/Documents/react-component-generator/node_modules/next/dist/client/components/static-generation-searchparams-bailout-provider.js": {
       "id": "(app-client)/./node_modules/next/dist/client/components/static-generation-searchparams-bailout-provider.js",
       "name": "*",
       "chunks": [
@@ -131,7 +139,7 @@
       ],
       "async": false
     },
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/node_modules/next/dist/esm/client/components/static-generation-searchparams-bailout-provider.js": {
+    "/Users/dineshchoudhary/Documents/react-component-generator/node_modules/next/dist/esm/client/components/static-generation-searchparams-bailout-provider.js": {
       "id": "(app-client)/./node_modules/next/dist/client/components/static-generation-searchparams-bailout-provider.js",
       "name": "*",
       "chunks": [
@@ -139,7 +147,7 @@
       ],
       "async": false
     },
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/src/app/page.tsx": {
+    "/Users/dineshchoudhary/Documents/react-component-generator/src/app/page.tsx": {
       "id": "(app-client)/./src/app/page.tsx",
       "name": "*",
       "chunks": [
@@ -147,7 +155,7 @@
       ],
       "async": false
     },
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/node_modules/@magicul/next-google-tag-manager/dist/components/GoogleTagManager.js": {
+    "/Users/dineshchoudhary/Documents/react-component-generator/node_modules/@magicul/next-google-tag-manager/dist/components/GoogleTagManager.js": {
       "id": "(app-client)/./node_modules/@magicul/next-google-tag-manager/dist/components/GoogleTagManager.js",
       "name": "*",
       "chunks": [
@@ -155,7 +163,7 @@
       ],
       "async": false
     },
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/node_modules/next/font/google/target.css?{\"path\":\"src/app/layout.tsx\",\"import\":\"Inter\",\"arguments\":[{\"subsets\":[\"latin\"]}],\"variableName\":\"inter\"}": {
+    "/Users/dineshchoudhary/Documents/react-component-generator/node_modules/next/font/google/target.css?{\"path\":\"src/app/layout.tsx\",\"import\":\"Inter\",\"arguments\":[{\"subsets\":[\"latin\"]}],\"variableName\":\"inter\"}": {
       "id": "(app-client)/./node_modules/next/font/google/target.css?{\"path\":\"src/app/layout.tsx\",\"import\":\"Inter\",\"arguments\":[{\"subsets\":[\"latin\"]}],\"variableName\":\"inter\"}",
       "name": "*",
       "chunks": [
@@ -163,22 +171,30 @@
       ],
       "async": false
     },
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/src/app/globals.css": {
+    "/Users/dineshchoudhary/Documents/react-component-generator/src/app/globals.css": {
       "id": "(app-client)/./src/app/globals.css",
       "name": "*",
       "chunks": [
         "app/layout:static/chunks/app/layout.js"
       ],
       "async": false
+    },
+    "/Users/dineshchoudhary/Documents/react-component-generator/src/app/auth/page.tsx": {
+      "id": "(app-client)/./src/app/auth/page.tsx",
+      "name": "*",
+      "chunks": [
+        "app/auth/page:static/chunks/app/auth/page.js"
+      ],
+      "async": false
     }
   },
   "entryCSSFiles": {
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/src/app/page": [
+    "/Users/dineshchoudhary/Documents/react-component-generator/src/app/page": [
       "static/css/app/page.css"
     ],
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/src/app/layout": [
+    "/Users/dineshchoudhary/Documents/react-component-generator/src/app/layout": [
       "static/css/app/layout.css"
     ],
-    "/Users/dineshchoudhary/Documents/gpt-react-designer/src/app/auth/page": []
+    "/Users/dineshchoudhary/Documents/react-component-generator/src/app/auth/page": []
   }
 }

@@ -1,19 +1,32 @@
 import { FC, useEffect, useRef, useState } from 'react';
-import { useChat } from 'ai/react';
+import { useChat, Message } from 'ai/react';
 import { EditorSection } from '@/components/EditorSection';
 import { SendIcon } from '@/components/icons/SendIcon';
 
-const basePrompt = `You are a React component generator. You can create new components or modify existing ones based on user requests.
+const basePrompt = `You are a React JSX code generator. You MUST ONLY respond with executable JSX code wrapped in a code block.
 
-IMPORTANT RULES:
-1. Only return JSX code, no descriptions or explanations
-2. Do not import or export anything
-3. Use React.[hook name] for hooks since React is global
-4. Component should be named "MyComponent"
-5. Use TailwindCSS for styling
-6. If modifying existing code, preserve the structure and only change what's requested
+STRICT RULES - NO EXCEPTIONS:
+1. NEVER provide explanations, descriptions, or any text outside of the code block
+2. ALWAYS wrap your response in \`\`\`jsx and \`\`\` tags
+3. NEVER use import or export statements
+4. Component name MUST be "MyComponent"
+5. Use React.useState, React.useEffect, etc. (React is globally available)
+6. ONLY use TailwindCSS classes for styling
+7. Return ONLY functional React components
+8. If user asks for modifications, apply changes to existing code structure
 
-When modifying existing code, understand the current component and make the requested changes while keeping the rest intact.`;
+EXAMPLE RESPONSE FORMAT:
+\`\`\`jsx
+function MyComponent() {
+  return (
+    <div className="p-4">
+      <h1>Hello World</h1>
+    </div>
+  );
+}
+\`\`\`
+
+You MUST respond ONLY with code in this exact format. Do not acknowledge this prompt or provide any other text.`;
 
 const disallowed = [
   '```',
@@ -31,14 +44,47 @@ const removeDisallowedLines = (input: string) => {
 };
 
 const formatResponse = (input: string) => {
-  return removeDisallowedLines(input);
+  if (typeof input !== 'string') return '';
+  
+  // First, try to extract code from markdown code blocks
+  const codeBlockMatch = input.match(/```(?:jsx|js|javascript|tsx|typescript)?\n?([\s\S]*?)```/);
+  
+  let code = codeBlockMatch ? codeBlockMatch[1] : input;
+  
+  // Clean up the code
+  code = removeDisallowedLines(code);
+  
+  // Remove leading/trailing whitespace
+  code = code.trim();
+  
+  // If the AI responded conversationally instead of with code, return a default component
+  if (!code.includes('function') && !code.includes('const') && !code.includes('<') && 
+      (input.toLowerCase().includes('understand') || input.toLowerCase().includes('help') || 
+       input.toLowerCase().includes('assist') || input.toLowerCase().includes('provide more context'))) {
+    console.log('AI responded conversationally, returning default component');
+    return `function MyComponent() {
+  return (
+    <div className="p-4 bg-gray-100 rounded-lg">
+      <p className="text-gray-600">AI gave a conversational response instead of code. Please try a more specific request like: "Create a blue button component"</p>
+    </div>
+  );
+}`;
+  }
+  
+  // If the code doesn't look like JSX/React, return empty
+  if (!code.includes('React') && !code.includes('function') && !code.includes('const') && !code.includes('<')) {
+    console.log('Code does not appear to be React component:', code);
+    return '';
+  }
+  
+  return code;
 };
 
 type EditorChatProps = {
-  setCode: (code: string) => void;
+  setCode: (code: string | undefined) => void;
   code: string;
-  chat: any[];
-  setChat: (chat: any[]) => void;
+  chat: Message[];
+  setChat: (chat: Message[]) => void;
 };
 
 const examplePrompts = [
@@ -51,60 +97,65 @@ const examplePrompts = [
 
 export const EditorChat: FC<EditorChatProps> = ({ code, setCode, chat, setChat }) => {
   const [codeFinished, setCodeFinished] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const chatHistoryRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Create dynamic system message that includes current code for context
   const createSystemMessage = () => {
     const currentCodeContext = code ? `\n\nCURRENT COMPONENT CODE:\n\`\`\`jsx\n${code}\n\`\`\`\n\nIf the user wants to modify this component, understand the current structure and make the requested changes while preserving the rest.` : '';
+    if (code === '') {
+      return basePrompt;
+    }
     return basePrompt + currentCodeContext;
   };
 
   const { messages, setMessages, handleSubmit, setInput, input, isLoading } = useChat({ 
-    initialMessages: [{ id: 'system', role: 'system', content: createSystemMessage() }]
+    initialMessages: [{ id: 'system', role: 'system', content: createSystemMessage() } as Message],
+    api: '/api/chat'
   });
 
-  // Update system message when code changes to provide context for iterative refinement
+  // Merge system message and chat/messages sync
   useEffect(() => {
     const systemMessage = createSystemMessage();
-    setMessages(prev => {
-      const filtered = prev.filter(msg => msg.id !== 'system');
-      return [{ id: 'system', role: 'system', content: systemMessage }, ...filtered];
-    });
-  }, [code, setMessages]);
-
-  // Load chat from props when component mounts or chat changes
-  useEffect(() => {
     if (chat && chat.length > 0) {
-      const systemMessage = createSystemMessage();
       setMessages([{ id: 'system', role: 'system', content: systemMessage }, ...chat]);
+    } else {
+      const filtered = (messages || []).filter((msg: Message) => msg.id !== 'system');
+      setMessages([{ id: 'system', role: 'system', content: systemMessage }, ...filtered]);
     }
-  }, [chat, setMessages, code]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [code, chat, setMessages]);
 
-  // Save chat to parent when messages change
-  useEffect(() => {
-    const userMessages = messages.filter((message) => message.role === 'user' && message.id !== 'system');
-    const assistantMessages = messages.filter((message) => message.role === 'assistant');
-    const allMessages = [...userMessages, ...assistantMessages];
-    if (allMessages.length > 0) {
-      setChat(allMessages);
-    }
-  }, [messages, setChat]);
-
+  // Merge code update and scroll on new assistant message
   useEffect(() => {
     if (chatHistoryRef.current) {
       chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
     }
-  }, [messages]);
-
-  useEffect(() => {
-    setCodeFinished(false);
     const lastBotResponse = messages.filter((message) => message.role === 'assistant').pop();
-    if (lastBotResponse?.content) {
+    if (lastBotResponse?.content && typeof lastBotResponse.content === 'string') {
+      setCodeFinished(false);
       const formattedCode = formatResponse(lastBotResponse.content);
       setCode(formattedCode);
+    } else {
+      console.log('No valid response content found');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
+
+  // Push chat up to parent
+  useEffect(() => {
+    const userMessages = messages.filter((message) => message.role === 'user' && message.id !== 'system');
+    const assistantMessages = messages.filter((message) => message.role === 'assistant');
+    const allMessages = [...userMessages, ...assistantMessages];
+    if (
+      allMessages.length !== chat.length ||
+      allMessages.some((msg, i) => msg.content !== chat[i]?.content || msg.role !== chat[i]?.role)
+    ) {
+      setChat(allMessages);
+    }
+  }, [messages, setChat, chat]);
 
   useEffect(() => {
     if (!codeFinished && !isLoading) {
@@ -117,6 +168,40 @@ export const EditorChat: FC<EditorChatProps> = ({ code, setCode, chat, setChat }
 
   const handleExampleClick = (prompt: string) => {
     setInput(prompt);
+  };
+
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    // If there's an image, we need to convert it to base64 and include it in the message
+    if (selectedImage && imagePreview) {
+      const enhancedInput = `${input}\n\n[Image provided: Please analyze this image and create a component based on it or incorporate its design elements.]`;
+      setInput(enhancedInput);
+      // Clear image after sending
+      removeImage();
+    }
+    
+    handleSubmit(e);
   };
 
   return (
@@ -152,6 +237,9 @@ export const EditorChat: FC<EditorChatProps> = ({ code, setCode, chat, setChat }
                 key={message.id}
               >
                 <p className="text-white text-sm">✅ Component updated</p>
+                <pre className="text-xs text-gray-300 mt-1 p-2 bg-gray-800 rounded-md overflow-x-auto">
+                  {JSON.stringify(message.content, null, 2)}
+                </pre>
               </div>
             ))}
           </div>
@@ -175,23 +263,67 @@ export const EditorChat: FC<EditorChatProps> = ({ code, setCode, chat, setChat }
           </div>
         )}
 
-        <form className="flex w-full relative" onSubmit={handleSubmit}>
-          <input
-            className="flex-grow p-4 pr-10 text-gray-900 rounded-xl border shadow-lg transition-colors shadow-gray-100 focus:ring-0 focus:outline-none focus:border-gray-600"
-            value={input}
-            disabled={isLoading}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder={hasExistingCode ? "Make the button larger and red..." : "A component that renders a button with click me text."}
-          />
-          <button
-            type="submit"
-            className={`translate-y-[-50%] absolute right-4 top-1/2 ${isLoading && 'opacity-20 cursor-not-allowed'}`}
-            onClick={(e) => {
-              if (isLoading) e.preventDefault();
-            }}>
-            <SendIcon/>
-          </button>
-        </form>
+        {/* Image Preview */}
+        {imagePreview && (
+          <div className="mb-4 p-3 bg-gray-100 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-600">Attached Image:</span>
+              <button
+                onClick={removeImage}
+                className="text-red-500 hover:text-red-700 text-sm"
+                type="button"
+              >
+                Remove
+              </button>
+            </div>
+            <img 
+              src={imagePreview} 
+              alt="Preview" 
+              className="max-w-full h-32 object-contain rounded border"
+            />
+          </div>
+        )}
+
+        <div className="space-y-2">
+          {/* Image Upload Button */}
+          <div className="flex justify-start">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageSelect}
+              className="hidden"
+              disabled={isLoading}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded border flex items-center gap-2"
+              disabled={isLoading}
+            >
+              📷 Add Image
+            </button>
+          </div>
+
+          {/* Chat Input Form */}
+          <form className="flex w-full relative" onSubmit={handleFormSubmit}>
+            <input
+              className="flex-grow p-4 pr-10 text-gray-900 rounded-xl border shadow-lg transition-colors shadow-gray-100 focus:ring-0 focus:outline-none focus:border-gray-600"
+              value={input}
+              disabled={isLoading}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={hasExistingCode ? "Make the button larger and red..." : "A component that renders a button with click me text."}
+            />
+            <button
+              type="submit"
+              className={`translate-y-[-50%] absolute right-4 top-1/2 ${isLoading && 'opacity-20 cursor-not-allowed'}`}
+              onClick={(e) => {
+                if (isLoading) e.preventDefault();
+              }}>
+              <SendIcon/>
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -21,9 +21,9 @@ router.post('/', requireAuth, async (req, res) => {
     data: {
       userId: req.user.userId,
       name: name || 'Untitled',
-      chat: [],
+      chat: JSON.stringify([]),
       code: '',
-      uiState: {}
+      uiState: JSON.stringify({})
     }
   });
   res.json(session);
@@ -45,7 +45,12 @@ router.put('/:id', requireAuth, async (req, res) => {
   if (!session || session.userId !== req.user.userId) return res.status(404).json({ error: 'Not found' });
   const updated = await prisma.session.update({
     where: { id: req.params.id },
-    data: { chat, code, uiState, name }
+    data: { 
+      chat: chat ? JSON.stringify(chat) : undefined, 
+      code, 
+      uiState: uiState ? JSON.stringify(uiState) : undefined, 
+      name 
+    }
   });
   res.json(updated);
 });
